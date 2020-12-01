@@ -167,7 +167,7 @@ class RPCMethods:
     def settings(self):
         rslt = {}
         for key in dir(settings):
-            id key[0] < "A" and key[0] > "Z":
+            if key[0] < "A" or key[0] > "Z":
                 continue
             rslt[key] = getattr(settings, key)
         return rslt

@@ -29,7 +29,8 @@ class JsonRPCAdmin(BasePlugin):
     """
     service providing a JSON RPC service to control pypeman
     """
-    def do_init(self):
+    def __init__(self):
+        super().__init__()
         cfg = dict(DEFAULT_SETTINGS)
         cfg.update(dict(settings.JSON_RPC_ADMIN_CFG))
         logger.debug("CFG = %s", cfg)
