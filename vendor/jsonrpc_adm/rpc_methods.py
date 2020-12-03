@@ -1,3 +1,5 @@
+import importlib
+
 from pypeman import channels
 from pypeman import nodes
 from pypeman.conf import settings
@@ -5,9 +7,6 @@ from pypeman.graph import mk_graph
 
 
 class RPCMethods:
-    def __init__(self):
-        pass
-
     def ping(self):
         """
         ping function (mostly for debug)
@@ -46,7 +45,6 @@ class RPCMethods:
         for channel in channels.all_channels:
             if name and name != channel.name:
                 continue
-            print(vars(channel).keys())
             uuid=channel.uuid.hex
             to_uuid[channel.name] = uuid
             if hasattr(channel, "as_json"):
@@ -82,7 +80,6 @@ class RPCMethods:
             )
         for node in nodes.all_nodes:
             name = node.name
-            print(vars(node).keys())
             if hasattr(node, "as_json"):
                 by_name[name] = node.as_json()
                 continue
@@ -165,10 +162,43 @@ class RPCMethods:
         return "NotImplemented"
 
     def settings(self):
+        """
+        retrieve pypeman settings
+        """
         rslt = {}
         for key in dir(settings):
             if key[0] < "A" or key[0] > "Z":
                 continue
             rslt[key] = getattr(settings, key)
         return rslt
+
+    def patch(self, modulename="vendor.jsonrpc_adm.patches", *args, **kwargs):
+        """
+        running patch code from a local file.
+        This allows to import / reimport code while pypeman is running.
+        Can be helpful for debugging, patching
+        """
+        # TODO:
+        # - add http import
+        # -
+        if modulename:
+            mod = importlib.import_module(modulename)
+            importlib.reload(mod)
+            if hasattr(mod, "patch"):
+                rslt = mod.patch(*args, **kwargs)
+            else:
+                rslt = str(mod)
+            return rslt
+
+    def shutdown(self):
+        """
+        shutdown pypeman
+        """
+        return "NotImplemented"
+
+    def disable_debug(self):
+        """
+        disable / shotdown debug interface
+        """
+        return "NotImplemented"
 

@@ -41,14 +41,14 @@ class JsonRPCAdmin(BasePlugin):
         self.verify = cfg["verify"]
         self.app = None
 
-    def do_ready(self):
+    def ready(self):
         rpc_methods = RPCMethods()
         self.app = server_app(
             http_args=self.http_args,
             rpc_methods=rpc_methods,
             )
 
-    async def do_start(self):
+    async def start(self):
         logger.debug("do_start")
         sock = SocketEndpoint.mk_socket(self.sock, self.reuse_port)
         self.srv = await self.loop.create_server(
@@ -59,5 +59,5 @@ class JsonRPCAdmin(BasePlugin):
         logger.debug("server created")
         return self.srv
 
-    async def do_stop(self):
+    async def stop(self):
         logger.debug("do_stop")
